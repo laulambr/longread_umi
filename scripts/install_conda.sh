@@ -58,7 +58,7 @@ channels:
 dependencies:
 - seqtk=1.3
 - parallel=20191122
-- racon=1.4.10
+- racon=1.4.20
 - minimap2=2.17
 - pip
 - gawk=4.1.3
@@ -92,7 +92,7 @@ git clone \
 sed \
   -i \
   's|from \.adapters import ADAPTERS|from adapters import ADAPTERS|' \
-  $CONDA_PREFIX/lib/python3.6/site-packages/porechop/porechop.py
+  $CONDA_PREFIX/lib/python3.7/site-packages/porechop/porechop.py
 
 # Create links to pipeline
 find \
