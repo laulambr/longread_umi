@@ -205,11 +205,13 @@ $GNUPARALLEL \
 
 # Stitch consensus sequences
 medaka stitch \
-  $OUT_DIR/consensus/*_consensus.hdf \
-  $OUT_DIR/consensus_${OUT_NAME}.fa
+ --no-fillgaps \
+ $OUT_DIR/consensus/*_consensus.hdf \
+ $CONSENSUS_FILE \
+ $OUT_DIR/consensus_${OUT_NAME}.fa
 
 # Clean consensus header
-sed -i -e "s/:.*//" -e "s/_segment.*//" $OUT_DIR/consensus_${OUT_NAME}.fa
+sed -i -e 's/_[^_]*$//' $OUT_DIR/consensus_${OUT_NAME}.fa
 
 # Deactivate medaka environment if relevant
 eval "$MEDAKA_ENV_STOP"
