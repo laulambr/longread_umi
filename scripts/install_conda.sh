@@ -50,7 +50,7 @@ echo "Installing longread_umi conda environment.."
 echo ""
 
 # Define conda env yml
-echo "name: longread_umi
+echo "name: longread_umi_HIV
 channels:
 - conda-forge
 - bioconda
@@ -60,21 +60,23 @@ dependencies:
 - parallel=20191122
 - racon=1.4.10
 - minimap2=2.17
-- medaka=1.0.1
+- pip
 - gawk=4.1.3
 - cutadapt=2.7
 - filtlong=0.2.0
 - bwa=0.7.17
-- samtools=1.9
-- bcftools=1.9
+- samtools=1.11
+- bcftools=1.11
 - git
-" > ./longread_umi.yml
+- pip:
+  - medaka==1.4.3
+" > ./longread_umi_HIV.yml
 
 # Install conda env
-conda env create -f ./longread_umi.yml
+conda env create -f ./longread_umi_HIV.yml
 
 eval "$(conda shell.bash hook)"
-conda activate longread_umi || source activate longread_umi
+conda activate longread_umi_HIV || source activate longread_umi_HIV
 
 # Install porechop
 $CONDA_PREFIX/bin/pip install \
@@ -83,7 +85,7 @@ $CONDA_PREFIX/bin/pip install \
 # Download longread-UMI from git
 git clone \
   --branch "$BRANCH" \
-  https://github.com/SorenKarst/longread-UMI-pipeline.git \
+  https://github.com/laulambr/longread_umi_hiv.git \
   $CONDA_PREFIX/longread_umi
 
 # Modify porechop to look for adapters.py in pythonpath
