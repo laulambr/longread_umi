@@ -171,6 +171,6 @@ if [ "$CLEAN_INSTALL" == "y" ]; then
     rm -f ./install_conda.sh
   fi
   if [ -f longread_umi.yml  ]; then 
-    rm -f ./longread_umi.yml
+    rm -f ./longread_umi_HIV.yml
   fi
 fi
