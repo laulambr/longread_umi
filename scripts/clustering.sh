@@ -566,7 +566,28 @@ $GAWK \
       }
     }
   }
-    # Output filtered clusters
+  # extract single 
+(FILENAME == C_UC) {
+  sub(";size.*", "", $9)
+  sub(";size.*", "", $10)
+  if ($1 == "C" && $3+0 == 1){
+    print $9 > "temp_single.lst"
+  }
+}
+# get duo
+(FILENAME == C_UC){
+    sub(";size.*", "", $9)
+    # Remove cluster < 2 reads and assign new cluster names
+    if ($1 == "C" && $3+0 == 2){
+      DUO_C[$9]="Duo" $2 ";size=" $3 ";"
+      for (READ in READS){
+        if (READS[READ] in DUO_C){
+          READS_DUO[READ]=DUO_C[READS[READ]]
+        }
+      }
+    }
+  }
+  # Output filtered clusters
   (FILENAME == R_FA && FNR%2==1){
     READ_HEADER=$0
     sub("^>", "", READ_HEADER)
@@ -592,6 +613,30 @@ $GAWK \
       getline
       # Output sequence to read cluster file
       print $0 > OUT_DIR "/clusters/" CLUSTER_NAME
+    }
+  }
+  # Output filtered duos
+  (FILENAME == R_FA && FNR%2==1){
+    READ_HEADER=$0
+    sub("^>", "", READ_HEADER)
+    if (READ_HEADER in DUO_C){
+      # Format cluster name
+      CLUSTER_NAME=READS_DUO[READ_HEADER]
+      sub(";.*", "", CLUSTER_NAME)
+      # Output header to read cluster file
+      print ">" READ_HEADER > OUT_DIR "/clusters/" CLUSTER_NAME".fa"
+      getline
+      # Output sequence to read cluster file
+      print $0 > OUT_DIR "/clusters/" CLUSTER_NAME".fa"
+    } else if (READ_HEADER in READS_DUO){
+      # Format cluster name
+      CLUSTER_NAME=READS_DUO[READ_HEADER]
+      sub(";.*", "", CLUSTER_NAME)
+      # Output header to read cluster file
+      print ">" READ_HEADER > OUT_DIR "/clusters/" CLUSTER_NAME".fa"
+      getline
+      # Output sequence to read cluster file
+      print $0 > OUT_DIR "/clusters/" CLUSTER_NAME".fa"
     }
     next
   }
@@ -626,9 +671,38 @@ $USEARCH \
   -sizein \
   -sizeout 
 
+# Extracting non clustered bins (=1) & failed trimming bins
+
+diff <( grep '^>' $IN_DIR/"$CONSENSUS_NAME.fa" | sort ) <( grep '^>' $OUT_DIR/"$CONSENSUS_NAME".trimmed.fa | sort ) | awk 'sub(/^< >/, "")' > $OUT_DIR/"temp_trim.fail.lst"
+
+$SEQTK subseq $OUT_DIR/"$CONSENSUS_NAME".trimmed.fa temp_single.lst > $OUT_DIR/"$CONSENSUS_NAME".single.trimmed.fa
+$SEQTK subseq $IN_DIR/"$CONSENSUS_NAME.fa" $OUT_DIR/"temp_trim.fail.lst" > $OUT_DIR/"$CONSENSUS_NAME".FAIL.trimmed.fa
+
+#
+for i in $(ls $OUT_DIR/clusters/Duo* | sed 's/.fa//g'); 
+do grep ">" "$i".fa  | cut -c2- > $OUT_DIR/clusters/temp_names;
+
+D1=$(cat $OUT_DIR/clusters/temp_names | awk -F ';' '{print $2}' | sed 's/ubs=//g' | head -1)
+D2=$(cat $OUT_DIR/clusters/temp_names | awk -F ';' '{print $2}' | sed 's/ubs=//g' | tail -1)
+
+if [ $D1 -gt $D2 ];
+then 
+  head -1 $OUT_DIR/clusters/temp_names | seqtk subseq "$i".fa  - > "$i".duo.trimmed.fa ;
+elif [ $D1 -lt $D2 ]; 
+  then
+  tail -1 $OUT_DIR/clusters/temp_names | seqtk subseq "$i".fa  - > "$i".duo.trimmed.fa ;
+else
+  head -1 $OUT_DIR/clusters/temp_names | seqtk subseq "$i".fa  - > "$i".duo.trimmed.fa 
+fi
+done; 
+
+cat $OUT_DIR/clusters/*.duo.trimmed.fa > $OUT_DIR/"$CONSENSUS_NAME".duo.trimmed.fa
+
 if [ "$DEBUG" = "NO" ]; then
   rm $OUT_DIR/*temp* ;
   rm $OUT_DIR/centroids.fa
+  rm $OUT_DIR/clusters/*temp*
+  rm $OUT_DIR/clusters/*.duo.trimmed.fa
 fi
 
 ### Testing
