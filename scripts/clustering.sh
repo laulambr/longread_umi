@@ -684,15 +684,15 @@ do grep ">" "$i".fa  | cut -c2- > $OUT_DIR/clusters/temp_names;
 
 D1=$(cat $OUT_DIR/clusters/temp_names | awk -F ';' '{print $2}' | sed 's/ubs=//g' | head -1)
 D2=$(cat $OUT_DIR/clusters/temp_names | awk -F ';' '{print $2}' | sed 's/ubs=//g' | tail -1)
-
+N=$(echo "$i" | awk -F '/' '{print $11}')
 if [ $D1 -gt $D2 ];
 then 
-  head -1 $OUT_DIR/clusters/temp_names | seqtk subseq "$i".fa  - > "$i".duo.trimmed.fa ;
+  head -1 $OUT_DIR/clusters/temp_names | seqtk subseq "$i".fa  - | sed "s/>.*/&_$N/" > "$i".duo.trimmed.fa ;
 elif [ $D1 -lt $D2 ]; 
   then
-  tail -1 $OUT_DIR/clusters/temp_names | seqtk subseq "$i".fa  - > "$i".duo.trimmed.fa ;
+  tail -1 $OUT_DIR/clusters/temp_names | seqtk subseq "$i".fa  - | sed "s/>.*/&_$N/" > "$i".duo.trimmed.fa ;
 else
-  head -1 $OUT_DIR/clusters/temp_names | seqtk subseq "$i".fa  - > "$i".duo.trimmed.fa 
+  head -1 $OUT_DIR/clusters/temp_names | seqtk subseq "$i".fa  - | sed "s/>.*/&_$N/" > "$i".duo.trimmed.fa 
 fi
 done; 
 
