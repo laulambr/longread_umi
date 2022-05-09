@@ -18,7 +18,7 @@ USAGE="
    Reads are initially grouped by read clustering at 99.5% identity and a centroid sequence is picked.
    The centroid sequence is used as a mapping reference for all reads in the cluster.
    
-usage: $(basename "$0" .sh) [-h -b] (-c file -F string -R string -m value -M value -o dir -i dir -t value ) 
+usage: $(basename "$0" .sh) [-h -b] (-c file -F string -R string -m value -M value -p value -o dir -i dir -t value ) 
 
 where:
     -h  Show this help text.
@@ -27,6 +27,7 @@ where:
     -R  Reverse tagging primer sequence.
     -m  Minimum read length.
     -M  Maximum read length.
+    -p  Percentage identity for usearch [Default = 0.995].
     -o  Output directory.
     -i  Input directory.
     -t  Number of threads to use. [Default = 1]
@@ -36,14 +37,15 @@ where:
 ### Terminal Arguments ---------------------------------------------------------
 
 # Import user arguments
-while getopts ':hzc:F:R:m:M:i:o:t:b' OPTION; do
+while getopts ':hzc:F:R:m:M:p:i:o:t:b' OPTION; do
   case $OPTION in
     h) echo "$USAGE"; exit 1;;
     c) CONSENSUS_FILE=$OPTARG;;
     F) FW2=$OPTARG;;
     R) RV2=$OPTARG;;
     m) MIN_LENGTH=$OPTARG;;
-    M) MAX_LENGTH=$OPTARG;;  
+    M) MAX_LENGTH=$OPTARG;;
+    p) IDEN=$OPTARG;;  
     o) OUT_DIR=$OPTARG;;
     i) IN_DIR=$OPTARG;;
     t) THREADS=$OPTARG;;
@@ -60,6 +62,7 @@ if [ -z ${OUT_DIR+x} ]; then echo "-o $MISSING"; echo "$USAGE"; exit 1; fi;
 if [ -z ${IN_DIR+x} ]; then echo "-i $MISSING"; echo "$USAGE"; exit 1; fi;
 if [ -z ${MIN_LENGTH+x} ]; then echo "-m $MISSING"; echo "$USAGE"; exit 1; fi;
 if [ -z ${MAX_LENGTH+x} ]; then echo "-M $MISSING"; echo "$USAGE"; exit 1; fi; 
+if [ -z ${IDEN+x} ]; then echo "-p is missing. Defaulting to 99.5 identity."; IDEN=0.995; fi;
 if [ -z ${FW2+x} ]; then echo "-F $MISSING"; echo "$USAGE"; exit 1; fi;
 if [ -z ${RV2+x} ]; then echo "-R $MISSING"; echo "$USAGE"; exit 1; fi;
 if [ -z ${THREADS+x} ]; then echo "-t is missing. Defaulting to 1 thread."; THREADS=1; fi;
@@ -520,7 +523,7 @@ $USEARCH \
 
 $USEARCH  \
     -cluster_fast $OUT_DIR/u_temp.fa  \
-    -id 0.995 \
+    -id $IDEN \
     -strand both \
     -centroids $OUT_DIR/u_temp_995.fa \
     -uc $OUT_DIR/u_temp_995_masked.uc \
@@ -685,6 +688,7 @@ do grep ">" "$i".fa  | cut -c2- > $OUT_DIR/clusters/temp_names;
 D1=$(cat $OUT_DIR/clusters/temp_names | awk -F ';' '{print $2}' | sed 's/ubs=//g' | head -1)
 D2=$(cat $OUT_DIR/clusters/temp_names | awk -F ';' '{print $2}' | sed 's/ubs=//g' | tail -1)
 N=$(echo "$i" | awk -F '/' '{print $11}')
+
 if [ $D1 -gt $D2 ];
 then 
   head -1 $OUT_DIR/clusters/temp_names | seqtk subseq "$i".fa  - | sed "s/>.*/&_$N/" > "$i".duo.trimmed.fa ;
@@ -707,4 +711,5 @@ fi
 
 ### Testing
 exit 0
+
 
