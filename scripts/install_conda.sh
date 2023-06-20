@@ -21,9 +21,16 @@ if [[ -z $(which conda) ]]; then
   
   if [ "$ASK_CONDA_INSTALL" == "y" ]; then
     # Install conda
-    [ -f Miniconda3-latest-Linux-x86_64.sh ] ||\
-      wget "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
-    bash ./Miniconda3-latest-Linux-x86_64.sh   
+    [ -f Miniconda3-py38_4.8.3-Linux-x86_64.sh ] ||\
+      wget "https://repo.anaconda.com/miniconda/Miniconda3-py38_4.8.3-Linux-x86_64.sh"
+    bash ./Miniconda3-py38_4.8.3-Linux-x86_64.sh
+    echo ""
+    echo "#-----------------------------------------------------------"
+    echo "Miniconda installed"
+    echo ""
+    echo "Re-run install_conda.sh to continue longread_umi installation."
+    echo ""
+    exec bash
   else
     echo ""
 	echo "Installation aborted..."
@@ -43,7 +50,7 @@ echo "Installing longread_umi conda environment.."
 echo ""
 
 # Define conda env yml
-echo "name: longread_umi
+echo "name: longread_umi_HIV
 channels:
 - conda-forge
 - bioconda
@@ -51,23 +58,25 @@ channels:
 dependencies:
 - seqtk=1.3
 - parallel=20191122
-- racon=1.4.10
+- racon=1.4.20
 - minimap2=2.17
-- medaka=0.11.5
+- pip
 - gawk=4.1.3
 - cutadapt=2.7
 - filtlong=0.2.0
 - bwa=0.7.17
-- samtools=1.9
-- bcftools=1.9
+- samtools=1.11
+- bcftools=1.11
 - git
-" > ./longread_umi.yml
+- pip:
+  - medaka==1.4.3
+" > ./longread_umi_HIV.yml
 
 # Install conda env
-conda env create -f ./longread_umi.yml
+conda env create -f ./longread_umi_HIV.yml
 
 eval "$(conda shell.bash hook)"
-conda activate longread_umi || source activate longread_umi
+conda activate longread_umi_HIV || source activate longread_umi_HIV
 
 # Install porechop
 $CONDA_PREFIX/bin/pip install \
@@ -76,13 +85,14 @@ $CONDA_PREFIX/bin/pip install \
 # Download longread-UMI from git
 git clone \
   --branch "$BRANCH" \
-  https://github.com/SorenKarst/longread-UMI-pipeline.git \
+  https://github.com/laulambr/longread_umi_hiv.git \
   $CONDA_PREFIX/longread_umi
 
-# Modify adapters.py
-cp \
-  $CONDA_PREFIX/longread_umi/scripts/adapters.py \
-  $CONDA_PREFIX/lib/python3.6/site-packages/porechop/adapters.py
+# Modify porechop to look for adapters.py in pythonpath
+sed \
+  -i \
+  's|from \.adapters import ADAPTERS|from adapters import ADAPTERS|' \
+  $CONDA_PREFIX/lib/python3.7/site-packages/porechop/porechop.py
 
 # Create links to pipeline
 find \
@@ -140,8 +150,6 @@ else
   echo "Path to conda environment: $CONDA_PREFIX"
   echo "Path to pipeline files: $CONDA_PREFIX/longread_umi"
   echo ""
-  echo "Initiate conda and refresh terminal:"
-  echo "conda init; source ~/.bashrc"
   echo ""
 fi
 
@@ -163,6 +171,6 @@ if [ "$CLEAN_INSTALL" == "y" ]; then
     rm -f ./install_conda.sh
   fi
   if [ -f longread_umi.yml  ]; then 
-    rm -f ./longread_umi.yml
+    rm -f ./longread_umi_HIV.yml
   fi
 fi
