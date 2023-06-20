@@ -318,12 +318,3 @@ $GAWK -v UBS="$UMI_COVERAGE_MIN" '
 ' $OUT_DIR/consensus_${CON_NAME}_${POLISH_NAME}.fa \
 > $OUT_DIR/consensus_${CON_NAME}_${POLISH_NAME}_${UMI_COVERAGE_MIN}.fa
 
-## Variant calling of from UMI consensus sequences
-longread_umi variants \
-  -c $OUT_DIR/consensus_${CON_NAME}_${POLISH_NAME}_${UMI_COVERAGE_MIN}.fa `# Path to consensus data`\
-  -o $OUT_DIR/variants `# Output folder`\
-  -t $THREADS `# Number of threads`
-
-## Copy variants
-cp $OUT_DIR/variants/variants.fa $OUT_DIR
-
