@@ -22,7 +22,7 @@ SM Karst, RM Ziels, RH Kirkegaard, EA Sørensen, D. McDonald, Q Zhu, R Knight, &
    
 2. Download installer script from terminal  
    ```
-   wget https://raw.githubusercontent.com/SorenKarst/longread_umi/master/scripts/install_conda.sh
+   wget https://raw.githubusercontent.com/laulambr/longread_umi_hiv/master/scripts/install_conda.sh
    ```
    
 3. Run installation script from terminal and follow instructions (< 10 min on desktop)  
