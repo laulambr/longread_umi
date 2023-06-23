@@ -33,7 +33,7 @@ longread_umi_version_dump (){
 
   echo "Script start: $(date +%Y-%m-%d-%T)"  >> $OUT
   echo "Software Version:" >> $OUT
-  echo "longread_umi - $(git --git-dir ${LONGREAD_UMI_PATH}/.git describe --tag)" >> $OUT
+  echo "longread_umi_HIV - $(git --git-dir ${LONGREAD_UMI_PATH}/.git describe --tag)" >> $OUT
   echo "seqtk - $($SEQTK 2>&1 >/dev/null | grep 'Version')" >> $OUT 
   echo "Parallel - $($GNUPARALLEL --version | head -n 1)" >> $OUT 
   echo "Usearch - $($USEARCH --version)" >> $OUT 

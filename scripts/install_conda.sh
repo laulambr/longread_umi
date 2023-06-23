@@ -1,10 +1,11 @@
 #!/bin/bash
 # DESCRIPTION
-#    Install longread_umi as conda environment.
+#    Install longread_umi_HIV as conda environment.
 #
 # IMPLEMENTATION
 #    author   Søren Karst (sorenkarst@gmail.com)
 #             Ryan Ziels (ziels@mail.ubc.ca)
+#             Laurens Lambrechts (laurens.lambrechts@ugent.be)
 #    license  GNU General Public License
 
 # Terminal input
@@ -46,7 +47,7 @@ fi
 
 # Install longread-UMI conda env ----------------------------------------------
 echo ""
-echo "Installing longread_umi conda environment.."
+echo "Installing longread_umi_HIV conda environment.."
 echo ""
 
 # Define conda env yml
@@ -68,6 +69,7 @@ dependencies:
 - samtools=1.11
 - bcftools=1.11
 - git
+- seqkit=2.4.0
 - pip:
   - medaka==1.4.3
 " > ./longread_umi_HIV.yml
@@ -88,11 +90,10 @@ git clone \
   https://github.com/laulambr/longread_umi_hiv.git \
   $CONDA_PREFIX/longread_umi
 
-# Modify porechop to look for adapters.py in pythonpath
-sed \
-  -i \
-  's|from \.adapters import ADAPTERS|from adapters import ADAPTERS|' \
-  $CONDA_PREFIX/lib/python3.7/site-packages/porechop/porechop.py
+# Modify adapters.py
+cp \
+  $CONDA_PREFIX/longread_umi/scripts/adapters.py \
+  $CONDA_PREFIX/lib/python3.7/site-packages/porechop/adapters.py
 
 # Create links to pipeline
 find \
@@ -140,12 +141,12 @@ ln -s \
 # Check installation
 if [[ -z $(which longread_umi) ]]; then
   echo ""
-  echo "Can't locate longread_umi"
-  echo "longread_umi installation failed..."
+  echo "Can't locate longread_umi_HIV"
+  echo "longread_umi_HIV installation failed..."
   echo ""
 else
   echo ""
-  echo "longread_umi installation success..."
+  echo "longread_umi_HIV installation success..."
   echo ""
   echo "Path to conda environment: $CONDA_PREFIX"
   echo "Path to pipeline files: $CONDA_PREFIX/longread_umi"
