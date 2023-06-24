@@ -228,7 +228,7 @@ $GAWK \
   }
   END {
     # Handle UMI bin subsetting
-    if (UMI_SUBSET_N+0 > 0){
+    if (SUB_N+0 > 0){
       # Determine bins to subset
       UMI_N = length(umi)
       if (SUB_N > UMI_N){
@@ -236,13 +236,13 @@ $GAWK \
       }
       # Sample bins
       srand(SEED)
-      while (SAMPLED <= SUB_N){
+      while (SAMPLED < SUB_N){
         # Sample line
-        SAMPLED++
         LINE=int((length(umi)+1) * rand())
         UMI_NAME=umi[LINE]
         sub(";.*", "bins.fastq", UMI_NAME)
-        print UMI_NAME
+        if (UMI_NAME != "") {SAMPLED++
+        print UMI_NAME}
         # Remove sampled UMI
         delete umi[LINE]
       }
@@ -251,12 +251,12 @@ $GAWK \
         UMI_NAME=umi[i]
         sub(";.*", "", UMI_NAME)
         print UMI_NAME "bins"
-        print UMI_NAME "_"
       }
     }
   }
   ' \
   $UMI_DIR/read_binning/umi_binning_stats.txt |\
+  awk NF |\
   sort -u \
   > $OUT_DIR/processed_bins.txt
   
