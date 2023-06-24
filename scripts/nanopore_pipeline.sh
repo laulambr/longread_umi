@@ -240,7 +240,7 @@ $GAWK \
         # Sample line
         LINE=int((length(umi)+1) * rand())
         UMI_NAME=umi[LINE]
-        sub(";.*", "bins.fastq", UMI_NAME)
+        sub(";.*", "bins", UMI_NAME)
         if (UMI_NAME != "") {SAMPLED++
         print UMI_NAME}
         # Remove sampled UMI
