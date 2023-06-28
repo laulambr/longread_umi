@@ -1,6 +1,6 @@
-# longread_umi 
+# longread_umi_hiv
 
-A collection of scripts for processing longread UMI data.
+Tool set for analyzing HIV-PULSE data. This repository is a modified branch of the [`longread_umi`](https://github.com/SorenKarst/longread_umi) pipeline developed by [Karst et al., 2021, Nature Methods](https://doi.org/10.1038/s41592-020-01041-y). 
 
 **Table of contents**
 - [Installation](#installation)
@@ -10,22 +10,21 @@ A collection of scripts for processing longread UMI data.
 - [Usage](#usage)
 
 **Citation**  
-SM Karst, RM Ziels, RH Kirkegaard, EA Sørensen, D. McDonald, Q Zhu, R Knight, & M Albertsen. (2020). Enabling high-accuracy long-read amplicon sequences using unique molecular identifiers with Nanopore or PacBio sequencing. [bioRxiv, 6459039](https://www.biorxiv.org/content/10.1101/645903v3).
+Lambrechts et al. (2023). HIV-PULSE: A long-read sequencing assay for high-throughput near full-length HIV-1 proviral genome characterization [bioRxiv](https://www.biorxiv.org/content/10.1101/2023.01.18.524396).
 
 ## Installation
 
 ### Conda
 
-1. Requirements/Dependencies  
-   OS tested (Linux 3.10.0, Ubuntu 14.04, Ubuntu 16.04)  
-    `usearch` >=10
+1. Download and install [usearch](https://drive5.com/usearch/download.html) >=10 according to instructions on the website
+   
    
 2. Download installer script from terminal  
    ```
    wget https://raw.githubusercontent.com/laulambr/longread_umi_hiv/master/scripts/install_conda.sh
    ```
    
-3. Run installation script from terminal and follow instructions (< 10 min on desktop)  
+3. Run installation script from terminal and follow instructions 
    `bash ./install_conda.sh` 
    
 4. If miniconda was installed along with the pipeline, initiate conda and refresh terminal before using pipeline.  
@@ -34,223 +33,20 @@ SM Karst, RM Ziels, RH Kirkegaard, EA Sørensen, D. McDonald, Q Zhu, R Knight, &
 5. Activate and deactivate conda environment
    
    ```
-   conda activate longread_umi
+   conda activate longread_umi_hiv
    ...
    conda deactivate
-   ```
-   
-6. The longread_umi installation directory can be found by typing. 
-
-   ```
-   conda activate longread_umi
-   echo "$CONDA_PREFIX/longread_umi"
-   conda deactivate
-   ```
-
-   This can be useful if you want to edit the usearch path in `longread_umi/scripts/dependencies.sh` or use the pipeline test data in `longread_umi/test_data/test_reads.fq`.
-
-### Manual
-
-1. Requirements/Dependencies  
-   OS tested (Linux 3.10.0, Ubuntu 14.04, Ubuntu 16.04)  
-   See `scripts/longread_umi_version_dump.txt`
-2. Clone from github in terminal  
-   `git clone https://github.com/SorenKarst/longread_umi.git`
-3. Make bash scripts executable  
-   `find ./longread_umi -name "*.sh" -exec chmod +x {} \;`
-4. Install dependencies  
-   See `./longread_umi/scripts/install_dependencies.sh` for inspiration.
-5. Change paths to dependencies  
-   Modify `./longread_umi/scripts/dependencies.sh` in a texteditor.
-6. Customize porechop adaptors.py to be able to detect custom primers  
-   Replace current `adapters.py` with `./longread_umi/scripts/adapters.py`
-
-## Quick start
-
-### Test data
-1. Test the longread_umi initialization command in terminal  
-    `longread_umi -h` or `/path/to/longread_umi.sh -h`
-    
-2. Test the nanopore_pipeline in terminal  
-    `longread_umi nanopore_pipeline -h` or `/path/to/longread_umi.sh nanopore_pipeline -h`
-    
-3. Test longread_umi nanopore_pipeline and qc_pipeline on test data:  
-   Go to /path/to/longread_umi/test_data and open a terminal in the directory.
-   
-4. Run pipeline tests 
-   
-   *Nanopore R9.4.1 data (< 5 minutes on desktop)*
+ 
+5. Test if installation was succesfull by running following command when environment is activated
    
    ```
-   longread_umi nanopore_pipeline \
-     -d test_reads.fq \
-     -v 30 \
-     -o test_r941 \
-     -s 90 \
-     -e 90 \
-     -m 3500 \
-     -M 6000 \
-     -f CAAGCAGAAGACGGCATACGAGAT \
-     -F AGRGTTYGATYMTGGCTCAG \
-     -r AATGATACGGCGACCACCGAGATC \
-     -R CGACATCGAGGTGCCAAAC \
-     -c 3 \
-     -p 1 \
-     -q r941_min_high_g330 \
-     -t 1
-     
-   longread_umi qc_pipeline \
-    -d test_reads.fq \
-     -c test_r941/consensus_raconx3_medakax1.fa \
-     -r zymo_curated \
-     -t 1 \
-     -u test_r941 \
-     -o test_r941/qc
-   ```
-   
-   Expected output
-   - `consensus_raconx3_medakax1.fa` containing 9 UMI consensus sequences
-   - `variants.fa` containing 3 variant consensus sequences
-   
-   *Nanopore R10 data (< 25 minutes on desktop)*
-   
-   ```
-   gunzip \
-     -c ont_r10_zymo_rrna.fq.gz > ont_r10_zymo_rrna.fq
-   
-   longread_umi nanopore_pipeline \
-     -d ont_r10_zymo_rrna.fq \
-     -o test_r10 \
-     -v 25 \
-     -q r10_min_high_g340 \
-     -m 3500 \
-     -M 6000 \
-     -s 90 \
-     -e 90 \
-     -f CAAGCAGAAGACGGCATACGAGAT \
-     -F AGRGTTYGATYMTGGCTCAG \
-     -r AATGATACGGCGACCACCGAGATC \
-     -R CGACATCGAGGTGCCAAAC \
-     -c 2 \
-     -p 2 \
-     -t 1
-     
-   longread_umi qc_pipeline \
-     -d <(gunzip -c ont_r10_zymo_rrna.fq.gz)\
-     -c test_r10/consensus_raconx2_medakax2.fa \
-     -r zymo_curated \
-     -t 1 \
-     -u test_r10 \
-     -o test_r10/qc
-   ```
-   
-   Expected output
-   
-   - `consensus_raconx2_medakax2.fa` containing  98 UMI consensus sequences
-   - `variants.fa` containing 13 variant consensus sequences
-   
-   *PacBio SequelII CCS data (< 15 minutes on desktop)* 
-   
-   ```
-   gunzip \
-   -c pb_ccs_zymo_rrna.fq.gz > pb_ccs_zymo_rrna.fq
-   
-   longread_umi pacbio_pipeline \
-     -d pb_ccs_zymo_rrna.fq \
-     -o test_pb_ccs \
-     -v 3 \
-     -m 3500 \
-     -M 6000 \
-     -s 60 \
-     -e 60 \
-     -f CAAGCAGAAGACGGCATACGAGAT \
-     -F AGRGTTYGATYMTGGCTCAG \
-     -r AATGATACGGCGACCACCGAGATC \
-     -R CGACATCGAGGTGCCAAAC \
-     -c 2 \
-     -t 1
-     
-   longread_umi qc_pipeline \
-     -d pb_ccs_zymo_rrna.fq \
-     -c test_pb_ccs/consensus_raconx2.fa \
-     -r zymo_curated \
-     -t 1 \
-     -u test_pb_ccs \
-     -o test_pb_ccs/qc
-   ```
-   
-   Expected output
-   
-   - `consensus_raconx2.fa` containing 99 UMI consensus sequences
-   - `variants.fa` containing  13 variant consensus sequences
-   
-   
-
-
-### Zymomock rRNA operon data
-1. Download the Zymomock rRNA operon Nanopore R9.4.1 fastq data and decompress
-   ```
-   wget ftp://ftp.sra.ebi.ac.uk/vol1/fastq/ERR333/003/ERR3336963/ERR3336963_1.fastq.gz 
-   gunzip -c ERR3336963_1.fastq.gz > reads.fq
-   ```
-2. Run nanopore pipeline (~ 500 CPU hours)
-   ```
-   longread_umi nanopore_pipeline \
-     -d reads.fq \
-     -o umi_out \
-     -v 30 \
-     -s 90 \
-     -e 90 \
-     -m 3500 \
-     -M 6000 \
-     -f CAAGCAGAAGACGGCATACGAGAT \
-     -F AGRGTTYGATYMTGGCTCAG \
-     -r AATGATACGGCGACCACCGAGATC \
-     -R CGACATCGAGGTGCCAAAC \
-     -c 3 \
-     -p 1 \
-     -q r941_min_high_g330 \
-     -t <Number-of-threads>
-   ```
-5. Run qc pipeline
-   ```
-   longread_umi qc_pipeline \
-     -d "umi_out/umi_binning/trim/reads_tf.fq;reads.fq" \
-     -c "umi_out/consensus_raconx3_medakax1.fa;umi_out/variants.fa" \
-     -r "zymo_curated" \
-     -u umi_out \
-     -o umi_out/qc \
-     -t <Number-of-threads> 
-   ```
-
-## Data
-
-Example data generated for different types of amplicons using Oxford Nanopore or PacBio.
-
-#### Oxford Nanopore
-
-Target | Sample | Sequencing setup | UMI consensus | Raw yield (Gbp) | Raw reads (M) | UMI reads (K)| Mean Length (bp) | Raw data (fastq) | Raw data (fast5) | UMI data (fasta) | Reference
----|---|---|---|---|---|---|---|---|---|---|---
-Bacterial rRNA operon (~4300 bp) | ZymoBIOMICS Microbial Community DNA Standard (D6306, lot no. ZRC190811) | MinION, R10, guppy3.4.4-hac | 2 x racon (v1.4.3), 2 x medaka (v0.11.2) | 18.9 | 4.4 | 23.4 | 4381 | [ERR3813594](https://www.ebi.ac.uk/ena/data/view/ERR3813594) | [ERR3813597](https://www.ebi.ac.uk/ena/data/view/ERR3813597) | [ERZ1284843](https://www.ebi.ac.uk/ena/data/view/ERZ1284843) | [Karst *et al*, 2020](https://www.biorxiv.org/content/10.1101/645903v3)
-Genomic DNA (mean fragment size ~4500 bp) | Escherichia coli str. K-12 substr. MG1655 (DSM 18039) | MinION, R10, guppy3.2.4-hac | 2 x racon (v1.4.3), 1 x medaka (v0.8.1) | 10.4 | 2.7 | 3.7 | 4476 | [ERR3813593](https://www.ebi.ac.uk/ena/data/view/ERR3813593) | [ERR3813596](https://www.ebi.ac.uk/ena/data/view/ERR3813596) | [CACVBX020000000.2](https://www.ebi.ac.uk/ena/browser/view/CACVBX02) | [Karst *et al*, 2020](https://www.biorxiv.org/content/10.1101/645903v3)
-
-
-#### PacBio
-
-Target | Sample | Sequencing setup | UMI consensus | Raw yield (Gbp) | Raw reads (M) | CCS reads (M) | UMI reads (K) | Mean Length (bp) | Subreads data (bam) | CCS data (bam) | UMI data (fasta) | Reference
----|---|---|---|---|---|---|---|---|---|---|---|---
-Bacterial rRNA operon (~4300 bp) | ZymoBIOMICS Microbial Community DNA Standard (D6306, lot no. ZRC190811) | Sequel II, SMRT cell 8M, Sequencing Kit 1.0, CCS (v3.4.1) | 2 x racon (v1.4.3) | 161.4 | 36.6 | 1.9 | 39.7 | 4376 | [ERR3813247](https://www.ebi.ac.uk/ena/data/view/ERR3813247) | [ERR3813246](https://www.ebi.ac.uk/ena/data/view/ERR3813246) | [ERZ1284840](https://www.ebi.ac.uk/ena/data/view/ERZ1284840) | [Karst *et al*, 2020](https://www.biorxiv.org/content/10.1101/645903v3)
-
-## Example analysis
-
-
-
-- [ONT R10 Zymomock rRNA - generate UMI consensus sequences and validate data](https://htmlpreview.github.io/?https://github.com/SorenKarst/longread_umi/blob/master/docs/ONT_R10_ZYMO_rRNA.html)  
-- [PB UMI Zymomock rRNA - generate UMI consensus sequences and validate data](https://htmlpreview.github.io/?https://github.com/SorenKarst/longread_umi/blob/master/docs/PB_UMI_ZYMO_rRNA.html)  
-
+   `longread_umi -h`
+   ...
+ 
 
 
 ## Usage
+
 
 ```
 
