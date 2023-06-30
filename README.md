@@ -22,10 +22,12 @@ Lambrechts et al. (2023). HIV-PULSE: A long-read sequencing assay for high-throu
    ```
    
 3. Run installation script from terminal and follow instructions 
-   ```bash ./install_conda.sh
+   ```
+   bash ./install_conda.sh
    
 4. If miniconda was installed along with the pipeline, initiate conda and refresh terminal before using pipeline.  
-   ```conda init; source ~/.bashrc`  
+   ```
+   conda init; source ~/.bashrc
    
 5. Activate and deactivate conda environment
    
@@ -37,18 +39,15 @@ Lambrechts et al. (2023). HIV-PULSE: A long-read sequencing assay for high-throu
 5. Test if installation was succesfull by running following command when environment is activated
    ```
    longread_umi -h
- 
- 
-
 
 ## Usage
 
 ### Main tools
 
 
-`longread_umi nanopore`: Generate UMI bin sequences from Nanopore data
+`longread_umi nanopore`: Generate UMI bin sequences from Nanopore data.
 
-`longread_umi demultiplex`: Dual barcode demultiplexing
+`longread_umi demultiplex`: Dual barcode demultiplexing.
 
 `longread_umi cluster`: Cluster related UMI bin sequences. 
 
