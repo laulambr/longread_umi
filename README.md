@@ -22,10 +22,10 @@ Lambrechts et al. (2023). HIV-PULSE: A long-read sequencing assay for high-throu
    ```
    
 3. Run installation script from terminal and follow instructions 
-   `bash ./install_conda.sh` 
+   ```bash ./install_conda.sh
    
 4. If miniconda was installed along with the pipeline, initiate conda and refresh terminal before using pipeline.  
-   `conda init; source ~/.bashrc`  
+   ```conda init; source ~/.bashrc`  
    
 5. Activate and deactivate conda environment
    
@@ -35,7 +35,8 @@ Lambrechts et al. (2023). HIV-PULSE: A long-read sequencing assay for high-throu
    conda deactivate
  
 5. Test if installation was succesfull by running following command when environment is activated
-   `longread_umi -h`
+   ```
+   longread_umi -h
  
  
 
@@ -136,7 +137,7 @@ where:
 ```
 ### Example script
 
-See following [file](https://github.com/laulambr/longread_umi_hiv/blob/master/Example.sh) for example commands to perform HIV-PULSE data analysis.
+See [following file](https://github.com/laulambr/longread_umi_hiv/blob/master/Example.sh) for example commands to perform HIV-PULSE data analysis.
   
 ## License
 [GNU General Public License, version 3](LICENSE)
