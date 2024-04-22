@@ -58,6 +58,7 @@ channels:
 - defaults
 dependencies:
 - seqtk=1.3
+- python =3.7
 - parallel=20191122
 - racon=1.4.20
 - minimap2=2.17
@@ -71,7 +72,7 @@ dependencies:
 - git
 - seqkit=2.4.0
 - pip:
-  - medaka==1.4.3
+  - medaka==1.4.4
 " > ./longread_umi_HIV.yml
 
 # Install conda env
