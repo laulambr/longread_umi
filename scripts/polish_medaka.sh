@@ -206,6 +206,7 @@ $GNUPARALLEL \
 # Stitch consensus sequences
 medaka stitch \
  --no-fillgaps \
+ --threads $THREADS \
  $OUT_DIR/consensus/*_consensus.hdf \
  $CONSENSUS_FILE \
  $OUT_DIR/consensus_${OUT_NAME}.fa

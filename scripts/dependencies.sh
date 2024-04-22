@@ -3,7 +3,7 @@
 #    Paths to dependencies for longread-UMI-pipeline 
 #
 # IMPLEMENTATION
-#    author   Søren Karst (sorenkarst@gmail.com)
+#    author   Sï¿½ren Karst (sorenkarst@gmail.com)
 #             Ryan Ziels (ziels@mail.ubc.ca)
 #    license  GNU General Public License
 
@@ -21,6 +21,8 @@ export PORECHOP_UMI=porechop
 export FILTLONG=filtlong
 export BWA=bwa
 export USEARCH=usearch
+export MEDAKA_ENV_START="source /path/to/medaka/bin/activate" #change to your medaka venv path
+export MEDAKA_ENV_STOP="deactivate"
 
 # longread_umi paths
 export REF_CURATED=$LONGREAD_UMI_PATH/scripts/zymo-ref-uniq_2019-10-28.fa
