@@ -7,11 +7,11 @@ Tool set for analyzing HIV-PULSE data. This repository is a modified branch of t
 - [Usage](#usage)
 
 **Citation**  
-Lambrechts et al. (2023). HIV-PULSE: A long-read sequencing assay for high-throughput near full-length HIV-1 proviral genome characterization [bioRxiv](https://www.biorxiv.org/content/10.1101/2023.01.18.524396).
+Lambrechts et al. (2023). HIV-PULSE: A long-read sequencing assay for high-throughput near full-length HIV-1 proviral genome characterization [NAR](https://academic.oup.com/nar/article/51/20/e102/7306674).
 
 ## Installation
 
-### Conda
+### 1. Conda
 
 1. Download and install [usearch](https://drive5.com/usearch/download.html) >=10 according to instructions on the website
    
@@ -32,13 +32,34 @@ Lambrechts et al. (2023). HIV-PULSE: A long-read sequencing assay for high-throu
 5. Activate and deactivate conda environment
    
    ```
-   conda activate longread_umi_hiv
+   conda activate longread_umi_HIV
    ...
    conda deactivate
  
-5. Test if installation was succesfull by running following command when environment is activated
+6. Test if installation was succesfull by running following command when environment is activated
    ```
    longread_umi -h
+
+### 2. Install medaka
+1. Create directory for medaka installation
+    ```
+    mkdir /path/to/medaka
+    ```
+
+2. Install medaka
+    ```
+    cd /path/to/medaka
+    python3 -m venv medaka --prompt "medaka"
+    source medaka/bin/activate
+    pip install --upgrade pip
+    pip install medaka
+    medaka tools download_models
+    deactivate
+    ```   
+2. Edit medaka location in scripts/dependencies.sh
+   ```
+   export MEDAKA_ENV_START="source /path/to/medaka/bin/activate"
+   ```
 
 ## Usage
 
