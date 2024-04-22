@@ -24,13 +24,12 @@ Lambrechts et al. (2023). HIV-PULSE: A long-read sequencing assay for high-throu
 3. Run installation script from terminal and follow instructions 
    ```
    bash ./install_conda.sh
-   
+   ```
 4. If miniconda was installed along with the pipeline, initiate conda and refresh terminal before using pipeline.  
    ```
    conda init; source ~/.bashrc
-   
+   ```
 5. Activate and deactivate conda environment
-   
    ```
    conda activate longread_umi_HIV
    ...
@@ -39,16 +38,17 @@ Lambrechts et al. (2023). HIV-PULSE: A long-read sequencing assay for high-throu
 6. Test if installation was succesfull by running following command when environment is activated
    ```
    longread_umi -h
-
+    ```
 ### 2. Install medaka
 1. Create directory for medaka installation
     ```
     mkdir /path/to/medaka
     ```
 
-2. Install medaka
+2. Install medaka (beware latest version (v1.11.3) does only support python 3.8-3.10)
     ```
     cd /path/to/medaka
+    
     python3 -m venv medaka --prompt "medaka"
     source medaka/bin/activate
     pip install --upgrade pip
@@ -70,7 +70,7 @@ Lambrechts et al. (2023). HIV-PULSE: A long-read sequencing assay for high-throu
 
 `longread_umi demultiplex`: Dual barcode demultiplexing.
 
-`longread_umi cluster`: Cluster related UMI bin sequences. 
+`longread_umi clustering`: Cluster related UMI bin sequences. 
 
 ```   
 usage: 
