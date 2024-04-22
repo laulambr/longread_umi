@@ -51,7 +51,7 @@ echo "Installing longread_umi_HIV conda environment.."
 echo ""
 
 # Define conda env yml
-echo "name: longread_umi_HIV
+echo "name: dev_longread_umi_HIV
 channels:
 - conda-forge
 - bioconda
@@ -73,13 +73,13 @@ dependencies:
 - seqkit=2.4.0
 - pip:
   - medaka==1.4.4
-" > ./longread_umi_HIV.yml
+" > ./dev_longread_umi_HIV.yml
 
 # Install conda env
-conda env create -f ./longread_umi_HIV.yml
+conda env create -f ./dev_longread_umi_HIV.yml
 
 eval "$(conda shell.bash hook)"
-conda activate longread_umi_HIV || source activate longread_umi_HIV
+conda activate dev_longread_umi_HIV || source activate dev_longread_umi_HIV
 
 # Install porechop
 $CONDA_PREFIX/bin/pip install \
